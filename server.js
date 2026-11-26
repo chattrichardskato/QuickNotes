@@ -1,22 +1,19 @@
 // server.js
 // Express server providing a REST API for notes.
-// Endpoints:
-//   GET    /api/notes      - list all notes
-//   POST   /api/notes      - create a note
-//   DELETE /api/notes/:id  - delete a note
 
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data', 'notes.json');
 
+// Middleware to parse JSON bodies and serve static frontend files
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- Data helpers ---
+// --- Data Helpers ---
 
 function ensureDataFile() {
   const dir = path.dirname(DATA_FILE);

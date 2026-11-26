@@ -1,6 +1,5 @@
 // app.js
 // Frontend logic: fetch notes from API, render them, handle add/delete.
-// Demonstrates client-server communication via fetch().
 
 const form = document.getElementById('note-form');
 const input = document.getElementById('note-input');
@@ -10,24 +9,34 @@ const API = '/api/notes';
 
 // Fetch and render all notes
 async function loadNotes() {
-  const res = await fetch(API);
-  const notes = await res.json();
-  list.innerHTML = '';
-  notes.forEach(note => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span>${escapeHtml(note.text)}</span>
-      <button data-id="${note.id}">Delete</button>
-    `;
-    list.appendChild(li);
-  });
-}
+  try {
+    const res = await fetch(API);
+    const notes = await res.json();
+    
+    list.innerHTML = '';
 
-// Escape HTML to prevent XSS in user-supplied text
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+    if (notes.length === 0) {
+      list.innerHTML = '<div class="empty-state">No notes yet. Add one above!</div>';
+      return;
+    }
+
+    notes.forEach(note => {
+      const li = document.createElement('li');
+      
+      const textSpan = document.createElement('span');
+      textSpan.textContent = note.text; // Safe from XSS
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.dataset.id = note.id;
+      
+      li.appendChild(textSpan);
+      li.appendChild(deleteBtn);
+      list.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Failed to load notes:', error);
+  }
 }
 
 // Handle form submission (create note)
@@ -36,18 +45,22 @@ form.addEventListener('submit', async (e) => {
   const text = input.value.trim();
   if (!text) return;
 
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  });
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
 
-  if (res.ok) {
-    input.value = '';
-    await loadNotes();
-  } else {
-    const err = await res.json();
-    alert(err.error || 'Failed to add note');
+    if (res.ok) {
+      input.value = '';
+      await loadNotes();
+    } else {
+      const err = await res.json();
+      alert(err.error || 'Failed to add note');
+    }
+  } catch (error) {
+    alert('Network error. Is the server running?');
   }
 });
 
@@ -55,8 +68,13 @@ form.addEventListener('submit', async (e) => {
 list.addEventListener('click', async (e) => {
   if (e.target.tagName !== 'BUTTON') return;
   const id = e.target.dataset.id;
-  await fetch(`${API}/${id}`, { method: 'DELETE' });
-  await loadNotes();
+  
+  try {
+    await fetch(`${API}/${id}`, { method: 'DELETE' });
+    await loadNotes();
+  } catch (error) {
+    console.error('Failed to delete note:', error);
+  }
 });
 
 // Initial load

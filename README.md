@@ -5,7 +5,7 @@ A full-stack web application for taking quick notes. Built with Node.js/Express
 
 ## Video Demo
 
-[Watch the 4-5 minute walkthrough](https://example.com/your-video-link)
+[Watch the 4-5 minute walkthrough](https://example.com/your-video-link) *(You must replace this with your actual video link)*
 
 ## What I Learned
 

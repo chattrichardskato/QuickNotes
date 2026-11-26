@@ -10,10 +10,12 @@
   <main>
     <h1>QuickNotes</h1>
     <form id="note-form">
-      <input type="text" id="note-input" placeholder="Write a note..." autocomplete="off">
+      <input type="text" id="note-input" placeholder="Write a note..." autocomplete="off" required>
       <button type="submit">Add</button>
     </form>
-    <ul id="note-list"></ul>
+    <ul id="note-list">
+      <!-- Notes will be injected here -->
+    </ul>
   </main>
   <script src="app.js"></script>
 </body>
