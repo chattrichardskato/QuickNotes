@@ -1,0 +1,12 @@
+{
+  "name": "quicknotes",
+  "version": "1.0.0",
+  "description": "A full-stack note-taking web app demonstrating REST API and frontend-backend integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
